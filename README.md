@@ -15,7 +15,7 @@ mobile: 0406770664 |
 
 There are many ways you can implement Authentication and Authorization with Jersey. This is the most simplest example I could demo with [JWT authentication](https://tools.ietf.org/html/rfc7519). By no means should you drop this code into production, not only does it have security flaws it can not be clustered due to the single instance nature of the keys.
 
-Additionally, in this project I have added tomcat as a plugin to the maven pom and created a war goal so this can be deployed as a war to a 2.5 servlet speced container.
+Additionally, in this project I have added tomcat as a plugin to the maven pom and created a war goal so this can be deployed as a war to a 2.5 servlet speced container, but I never tried it out. I suspect it will need to be tweaked to get it to deploy properly.
 
 ### Why
 
