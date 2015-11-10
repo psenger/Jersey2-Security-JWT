@@ -1,3 +1,8 @@
+/Jersey2-Security-JWT.iws
+/Jersey2-Security-JWT.ipr
+/Jersey2-Security-JWT.iml
+/.idea
+/target
 target/
 pom.xml.tag
 pom.xml.releaseBackup
