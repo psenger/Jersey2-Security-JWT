@@ -34,7 +34,13 @@ public class BookResourceTest extends JerseyTest {
     private Token AdminToken;
     private Token NormalToken;
 
-    private static final User buildUser(Long id, String username, String email, String[] roles, String hashedPassword) {
+    private static final Book book1 = buildBook("The Sharp Sliver","Clementine Green","1234",new Date(),Genre.FANTASY);
+    private static final Book book2 = buildBook("Edge of Darkness","Francisco Fry","45567",new Date(),Genre.SCIFI);
+
+    private String book1Id;
+    private String book2Id;
+
+    private static User buildUser(Long id, String username, String email, String[] roles, String hashedPassword) {
         User user = new User();
         user.setEmail(email);
         user.setId(id);
@@ -44,15 +50,27 @@ public class BookResourceTest extends JerseyTest {
         return user;
     }
 
+    private static Book buildBook( String title, String author, String isbn, Date published, Genre genre) {
+        Book book = new Book();
+        book.setTitle(title);
+        book.setAuthor(author);
+        book.setIsbn(isbn);
+        book.setPublished(published);
+        book.setGenre(genre);
+        return book;
+    }
+
     protected javax.ws.rs.core.Application configure() {
         enable(TestProperties.LOG_TRAFFIC);
         enable(TestProperties.DUMP_ENTITY);
-        final BookDao dao = new BookDao();
+        final BookDao bookDao = new BookDao();
         final UserDao userDao = new UserDao();
         userDao.addUser(AdminUser);
         userDao.addUser(NormalUser);
+        book1Id = bookDao.addBook(book1).getId();
+        book2Id = bookDao.addBook(book2).getId();
         final Key key = MacProvider.generateKey();
-        return new com.sample.Application(dao, userDao, key);
+        return new com.sample.Application(bookDao, userDao, key);
     }
 
     @Before
@@ -165,14 +183,14 @@ public class BookResourceTest extends JerseyTest {
     @Test
     public void testGetBookAsNormalUser() {
         getToken();
-        Book response = target("books").path("1").request().header("Authorization", "Bearer " + NormalToken.getAuthToken()).get(Book.class);
+        Book response = target("books").path(book1Id).request().header("Authorization", "Bearer " + NormalToken.getAuthToken()).get(Book.class);
         assertNotNull(response);
     }
 
     @Test
     public void testGetBookAsNormalAdmin() {
         getToken();
-        Book response = target("books").path("1").request().header("Authorization", "Bearer " + AdminToken.getAuthToken()).get(Book.class);
+        Book response = target("books").path(book2Id).request().header("Authorization", "Bearer " + AdminToken.getAuthToken()).get(Book.class);
         assertNotNull(response);
     }
 
@@ -209,11 +227,11 @@ public class BookResourceTest extends JerseyTest {
     @Test
     public void testGetBookEntityTag() {
         getToken();
-        EntityTag entityTag = target("books").path("1").request().header("Authorization", "Bearer " + NormalToken.getAuthToken())
+        EntityTag entityTag = target("books").path(book1Id).request().header("Authorization", "Bearer " + NormalToken.getAuthToken())
                 .get().getEntityTag();
         assertNotNull(entityTag);
 
-        Response response = target("books").path("1").request().header("Authorization", "Bearer " + NormalToken.getAuthToken())
+        Response response = target("books").path(book1Id).request().header("Authorization", "Bearer " + NormalToken.getAuthToken())
                 .header("If-None-Match", entityTag).get();
 
         assertEquals(304, response.getStatus());

@@ -1,12 +1,15 @@
 package com.sample.dao;
 
 import com.sample.dao.UserDao;
+import com.sample.domain.EntityNotFoundException;
 import com.sample.domain.User;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Random;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -95,7 +98,7 @@ public class UserDaoTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void testAddUserTwice() throws Exception {
-        dao.addUser(buildUser( "B", "B@gmail.com", new String[]{"B"}, "B"));
+        dao.addUser(buildUser("B", "B@gmail.com", new String[]{"B"}, "B"));
     }
 
     /**
@@ -128,8 +131,23 @@ public class UserDaoTest {
         User update = dao.update(user);
         System.out.println("update.getVersion() = " + update.getVersion());
         // assertEquals( version, update.getVersion() );
-        assertEquals(  "Monkey@foo.com", update.getEmail() );
+        assertEquals("Monkey@foo.com", update.getEmail());
     }
 
+    /**
+     * Method: User getUser(String username) throws EntityNotFoundException
+     */
+    @Test(expected = EntityNotFoundException.class)
+    public void testGetUserByNameEntityNotFoundException () throws Exception {
+        User user = dao.getUser(UUID.randomUUID().toString());
+    }
+
+    /**
+     * Method: User getUser(Long id) throws EntityNotFoundException
+     */
+    @Test(expected = EntityNotFoundException.class)
+    public void testGetUserByIdEntityNotFoundException() throws Exception {
+        User user = dao.getUser(Long.MAX_VALUE);
+    }
 
 } 
