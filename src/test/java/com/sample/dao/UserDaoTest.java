@@ -1,6 +1,7 @@
-package com.sample.domain;
+package com.sample.dao;
 
 import com.sample.dao.UserDao;
+import com.sample.domain.User;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
